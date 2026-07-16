@@ -36,11 +36,43 @@ The dataset contains transactional information, including `step` (mapping to a u
     *   `LogisticRegression`: Chosen as the classification model, configured with `class_weight='balanced'` to handle the imbalanced nature of fraud detection datasets (where fraudulent transactions are rare).
     *   `train_test_split`: Divides the dataset into training and testing sets to evaluate model performance on unseen data.
 
-### 5. Model Evaluation
-*   **`scikit-learn.metrics`**: Provides tools to assess the model's performance:
-    *   `Pipe.score()`: Reports the overall accuracy of the model on the test set.
-    *   `confusion_matrix()`: Generates a matrix showing true positives, true negatives, false positives, and false negatives, crucial for understanding classification errors.
-    *   `classification_report()`: Offers a detailed summary of precision, recall, and f1-score for each class, which are more informative than accuracy for imbalanced datasets.
+### 5.Models Trained
+Explores various machine learning models for fraud detection
+
+1.  **Model 1: Logistic Regression (No balancing)**
+    *   A baseline Logistic Regression model without any explicit handling of class imbalance.
+
+2.  **Model 2: Logistic Regression with SMOTE**
+    *   Logistic Regression combined with SMOTE (Synthetic Minority Over-sampling Technique) to address class imbalance by over-sampling the minority class.
+
+3.  **Model 3: Random Forest (No balancing)**
+    *   A baseline Random Forest Classifier without any explicit handling of class imbalance.
+
+4.  **Model 4: Random Forest with SMOTE**
+    *   Random Forest Classifier combined with SMOTE to address class imbalance.
+
+### Evaluation Metrics
+The models were evaluated using the following metrics, with a focus on detecting the minority class (fraudulent transactions):
+
+*   **Precision (for class 1.0 - Fraud)**: The proportion of correctly identified fraudulent transactions among all transactions predicted as fraudulent.
+*   **Recall (for class 1.0 - Fraud)**: The proportion of actual fraudulent transactions that were correctly identified.
+*   **F1-Score (for class 1.0 - Fraud)**: The harmonic mean of precision and recall, providing a single metric that balances both.
+*   **ROC AUC**: The Area Under the Receiver Operating Characteristic curve, which measures the model's ability to distinguish between classes across various thresholds.
+
+### Model Results Comparison
+The evaluation results were as follows:
+
+| Model Name                                    | Precision (Fraud) | Recall (Fraud) | F1-Score (Fraud) | ROC AUC |
+| :-------------------------------------------- | :---------------- | :------------- | :--------------- | :------ |
+| Model 1: Logistic Regression (No balancing)   | 1.000             | 0.022          | 0.043            | 0.924   |
+| Model 2: Logistic Regression with SMOTE       | 0.003             | 0.957          | 0.006            | 0.965   |
+| Model 3: Random Forest (No balancing)         | 0.962             | 0.543          | 0.694            | 0.890   |
+| Model 4: Random Forest with SMOTE             | 0.093             | 0.674          | 0.163            | 0.948   |
+
+### Conclusion
+Based on the evaluation metrics, **Model 3: Random Forest (No balancing)** performed well for fraud detection. It achieved a high precision (0.962) and a reasonable recall (0.543) for the fraudulent class, resulting in a good F1-score (0.694) and an overall good ROC AUC of 0.890. While Model 2 (Logistic Regression with SMOTE) had a higher ROC AUC, its extremely low precision (0.003) indicates a high rate of false positives, making it less practical for real-world fraud detection where minimizing false alarms is often crucial. Model 4 (Random Forest with SMOTE) had better recall but significantly lower precision and F1-score than Model 3.
+
+Therefore, **Random Forest without balancing** was selected as the preferred model due to its balanced performance across precision, recall, and ROC AUC, demonstrating its ability to effectively identify fraud without an excessive number of false positives.
 
 ### 6. Model Persistence
 *   **`joblib`**: The trained machine learning pipeline is saved to a file (`fraud_detection.pkl`) using `joblib.dump()`. This allows for the model to be loaded and reused later without needing to retrain it, facilitating deployment and future predictions.
@@ -49,6 +81,14 @@ The dataset contains transactional information, including `step` (mapping to a u
 The streamlitML.py file is an interactive web application built with Streamlit that predicts financial fraud using a pre-trained machine learning model `(fraud_detection.pkl)`.
 Its primary feature is a user-friendly interface that allows users to evaluate transaction safety without writing any code.
 
-The application prompts users to select a transaction type `(e.g., CASH_OUT, TRANSFER)` and enter numerical values for the transaction amount, alongside the old and new balances of both the sender and receiver.
 
-Upon clicking the `"Predict"` button, the app’s underlying logic structures these six inputs into a Pandas DataFrame. This formatted data is then passed to the loaded machine learning model for analysis. The model evaluates the transaction patterns and returns a binary prediction. Finally, the app displays the result visually: a red error message indicating "Fraud" if the output is 1, or a green success message confirming the transaction is safe if the output is 0.
+
+
+
+
+
+
+
+
+
+
